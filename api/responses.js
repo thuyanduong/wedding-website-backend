@@ -26,9 +26,9 @@ export default async function handler(req, res) {
     const collection = db.collection("responses"); // your collection name
 
     // Simple find query
-    const users = await collection.find({}).toArray();
+    const responses = await collection.find({}).toArray();
 
-    res.status(200).json({ users });
+    res.status(200).json({ responses });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch data" });
