@@ -1,5 +1,7 @@
+// /api/responses/
+
 import { MongoClient } from "mongodb";
-import 'dotenv/config'; 
+import 'dotenv/config';
 
 let cachedClient = null;
 

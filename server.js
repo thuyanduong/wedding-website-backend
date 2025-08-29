@@ -1,22 +1,20 @@
 import express from "express";
-import fs from "fs";
-import path from "path";
+import responses from "./api/responses.js";
+import responseById from "./api/responses/[id].js";
+import hello from "./api/hello.js";
+import test from "./api/test.js";
 
 const app = express();
 const PORT = process.env.PORT || 5555;
 
-// Convert ES Modules path
-const __dirname = path.resolve();
+// Middleware to parse JSON
+app.use(express.json());
 
-// Dynamically load all API routes
-const apiDir = path.join(__dirname, "api");
-fs.readdirSync(apiDir).forEach((file) => {
-  const routePath = `/api/${file.replace(/\.(js|ts)$/, "")}`;
-  import(`./api/${file}`).then((module) => {
-    app.all(routePath, module.default);
-    console.log(`Loaded route ${routePath}`);
-  });
-});
+// Register endpoints explicitly
+app.all("/api/responses", responses);
+app.all("/api/responses/:id", responseById); // pass req directly, handler uses req.params.id
+app.all("/api/hello", hello);
+app.all("/api/test", test);
 
 // Start server
 app.listen(PORT, () => {
