@@ -74,7 +74,7 @@ export default async function handler(req, res) {
                         }
                     },
 
-                    // Entrees (only for adults)
+                    // Entrees (only for Adults)
                     adultBeefEntrees: {
                         $sum: {
                             $cond: [
@@ -97,6 +97,44 @@ export default async function handler(req, res) {
                         $sum: {
                             $cond: [
                                 { $and: [{ $eq: ["$guests.wedding_entree", "Vegetarian"] }, { $eq: ["$guests.age_group", "Adult"] }] },
+                                1,
+                                0
+                            ]
+                        }
+                    },
+
+                    // Entrees (only for Children)
+                    childBeefEntrees: {
+                        $sum: {
+                            $cond: [
+                                { $and: [{ $eq: ["$guests.wedding_entree", "Beef"] }, { $eq: ["$guests.age_group", "Child"] }] },
+                                1,
+                                0
+                            ]
+                        }
+                    },
+                    childFishEntrees: {
+                        $sum: {
+                            $cond: [
+                                { $and: [{ $eq: ["$guests.wedding_entree", "Fish"] }, { $eq: ["$guests.age_group", "Child"] }] },
+                                1,
+                                0
+                            ]
+                        }
+                    },
+                    childVegetarianEntrees: {
+                        $sum: {
+                            $cond: [
+                                { $and: [{ $eq: ["$guests.wedding_entree", "Vegetarian"] }, { $eq: ["$guests.age_group", "Child"] }] },
+                                1,
+                                0
+                            ]
+                        }
+                    },
+                    childChildrenEntrees: {
+                        $sum: {
+                            $cond: [
+                                { $and: [{ $eq: ["$guests.wedding_entree", "Child"] }, { $eq: ["$guests.age_group", "Child"] }] },
                                 1,
                                 0
                             ]
@@ -137,7 +175,27 @@ export default async function handler(req, res) {
                                 0
                             ]
                         }
-                    }
+                    },
+
+                    // Error Checking
+                    badEntreeData: {
+                        $sum: {
+                            $cond: [
+                                { $nin: ["$guests.wedding_entree", ["Beef", "Fish", "Vegetarian", "Child", null]] },
+                                1,
+                                0
+                            ]
+                        }
+                    },
+                    badAgeData: {
+                        $sum: {
+                            $cond: [
+                                { $nin: ["$guests.age_group", ["Adult", "Child", "Toddler"]] },
+                                1,
+                                0
+                            ]
+                        }
+                    },
                 }
             }
         ]).toArray();
