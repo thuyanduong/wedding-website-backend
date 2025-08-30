@@ -40,7 +40,7 @@ export default async function handler(req, res) {
       mutation.updated_at = new Date()
       mutation.email = newResponse.email
       mutation.phone = newResponse.phone
-      if (mutation.comments.trim() === "") {
+      if (newResponse.comments.trim() === "") {
         mutation.comments = null
       } else {
         mutation.comments = newResponse.comments
