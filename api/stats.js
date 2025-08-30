@@ -35,7 +35,7 @@ export default async function handler(req, res) {
                     totalInvitees: {
                         $sum: 1
                     },
-                    notRSVPed: {
+                    notYetRSVPed: {
                         $sum: { $cond: [{ $eq: ["$guests.attend_wedding", null] }, 1, 0] }
                     },
                     attendingWedding: {
