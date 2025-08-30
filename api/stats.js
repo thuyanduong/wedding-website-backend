@@ -181,7 +181,11 @@ export default async function handler(req, res) {
                     badEntreeData: {
                         $sum: {
                             $cond: [
-                                { $nin: ["$guests.wedding_entree", ["Beef", "Fish", "Vegetarian", "Child", null]] },
+                                {
+                                    $not: {
+                                        $in: ["$guests.wedding_entree", ["Beef", "Fish", "Vegetarian", "Child", null]]
+                                    }
+                                },
                                 1,
                                 0
                             ]
@@ -190,12 +194,17 @@ export default async function handler(req, res) {
                     badAgeData: {
                         $sum: {
                             $cond: [
-                                { $nin: ["$guests.age_group", ["Adult", "Child", "Toddler"]] },
+                                {
+                                    $not: {
+                                        $in: ["$guests.age_group", ["Adult", "Child", "Toddler", null]]
+                                    }
+                                },
                                 1,
                                 0
                             ]
                         }
-                    },
+                    }
+
                 }
             }
         ]).toArray();
