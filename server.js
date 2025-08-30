@@ -3,7 +3,8 @@ import responses from "./api/responses.js";
 import responseById from "./api/responses/[id].js";
 import hello from "./api/hello.js";
 import test from "./api/test.js";
-import guests from "./api/guests.js"
+import stats from "./api/stats.js"
+import guests from './api/guests.js'
 
 const app = express();
 const PORT = process.env.PORT || 5555;
@@ -13,6 +14,7 @@ app.use(express.json());
 
 // Register endpoints explicitly
 app.all("/api/responses", responses);
+app.all("/api/stats", stats);
 app.all("/api/guests", guests);
 app.all("/api/responses/:id", responseById); // pass req directly, handler uses req.params.id
 app.all("/api/hello", hello);

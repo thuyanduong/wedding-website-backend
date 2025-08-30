@@ -1,4 +1,4 @@
-// /api/guests/
+// /api/responses/
 
 import { MongoClient } from "mongodb";
 import 'dotenv/config';
@@ -28,121 +28,9 @@ export default async function handler(req, res) {
         const collection = db.collection("guests"); // your collection name
 
         // Simple find query
-        const stats = await collection.aggregate([
-            {
-                $group: {
-                    _id: null,
-                    totalInvitees: {
-                        $sum: 1
-                    },
-                    notRSVPed: {
-                        $sum: { $cond: [{ $eq: ["$guests.attend_wedding", null] }, 1, 0] }
-                    },
-                    attendingWedding: {
-                        $sum: { $cond: [{ $eq: ["$guests.attend_wedding", true] }, 1, 0] }
-                    },
-                    notAttendingWedding: {
-                        $sum: { $cond: [{ $eq: ["$guests.attend_wedding", false] }, 1, 0] }
-                    },
+        const guests = await collection.find({}).toArray();
 
-                    // Adults / Children / Toddlers attending wedding
-                    adultsWedding: {
-                        $sum: {
-                            $cond: [
-                                { $and: [{ $eq: ["$guests.attend_wedding", true] }, { $eq: ["$guests.age_group", "Adult"] }] },
-                                1,
-                                0
-                            ]
-                        }
-                    },
-                    childrenWedding: {
-                        $sum: {
-                            $cond: [
-                                { $and: [{ $eq: ["$guests.attend_wedding", true] }, { $eq: ["$guests.age_group", "Child"] }] },
-                                1,
-                                0
-                            ]
-                        }
-                    },
-                    toddlersWedding: {
-                        $sum: {
-                            $cond: [
-                                { $and: [{ $eq: ["$guests.attend_wedding", true] }, { $eq: ["$guests.age_group", "Toddler"] }] },
-                                1,
-                                0
-                            ]
-                        }
-                    },
-
-                    // Entrees (only for adults)
-                    adultBeefEntrees: {
-                        $sum: {
-                            $cond: [
-                                { $and: [{ $eq: ["$guests.wedding_entree", "Beef"] }, { $eq: ["$guests.age_group", "Adult"] }] },
-                                1,
-                                0
-                            ]
-                        }
-                    },
-                    adultFishEntrees: {
-                        $sum: {
-                            $cond: [
-                                { $and: [{ $eq: ["$guests.wedding_entree", "Fish"] }, { $eq: ["$guests.age_group", "Adult"] }] },
-                                1,
-                                0
-                            ]
-                        }
-                    },
-                    adultVegetarianEntrees: {
-                        $sum: {
-                            $cond: [
-                                { $and: [{ $eq: ["$guests.wedding_entree", "Vegetarian"] }, { $eq: ["$guests.age_group", "Adult"] }] },
-                                1,
-                                0
-                            ]
-                        }
-                    },
-
-                    // Welcome party
-                    attendingWelcomeParty: {
-                        $sum: { $cond: [{ $eq: ["$guests.attend_welcome_party", true] }, 1, 0] }
-                    },
-                    notAttendingWelcomeParty: {
-                        $sum: { $cond: [{ $eq: ["$guests.attend_welcome_party", false] }, 1, 0] }
-                    },
-
-                    adultsWelcomeParty: {
-                        $sum: {
-                            $cond: [
-                                { $and: [{ $eq: ["$guests.attend_welcome_party", true] }, { $eq: ["$guests.age_group", "Adult"] }] },
-                                1,
-                                0
-                            ]
-                        }
-                    },
-                    childrenWelcomeParty: {
-                        $sum: {
-                            $cond: [
-                                { $and: [{ $eq: ["$guests.attend_welcome_party", true] }, { $eq: ["$guests.age_group", "Child"] }] },
-                                1,
-                                0
-                            ]
-                        }
-                    },
-                    toddlersWelcomeParty: {
-                        $sum: {
-                            $cond: [
-                                { $and: [{ $eq: ["$guests.attend_welcome_party", true] }, { $eq: ["$guests.age_group", "Toddler"] }] },
-                                1,
-                                0
-                            ]
-                        }
-                    }
-                }
-            }
-        ]).toArray();
-
-        res.status(200).json(stats[0]);
+        res.status(200).json({ guests });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Failed to fetch data" });
