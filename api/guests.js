@@ -48,6 +48,10 @@ export default async function handler(req, res) {
                     }
                 }
             }, {
+                '$set': {
+                    'name': '$_id'
+                }
+            }, {
                 '$sort': {
                     '_id': 1
                 }
