@@ -46,7 +46,7 @@ export default async function handler(req, res) {
                     },
 
                     // Adults / Children / Toddlers attending wedding
-                    adultsWedding: {
+                    adultsAttendingWedding: {
                         $sum: {
                             $cond: [
                                 { $and: [{ $eq: ["$guests.attend_wedding", true] }, { $eq: ["$guests.age_group", "Adult"] }] },
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
                             ]
                         }
                     },
-                    childrenWedding: {
+                    childrenAttendingWedding: {
                         $sum: {
                             $cond: [
                                 { $and: [{ $eq: ["$guests.attend_wedding", true] }, { $eq: ["$guests.age_group", "Child"] }] },
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
                             ]
                         }
                     },
-                    toddlersWedding: {
+                    toddlersAttendingWedding: {
                         $sum: {
                             $cond: [
                                 { $and: [{ $eq: ["$guests.attend_wedding", true] }, { $eq: ["$guests.age_group", "Toddler"] }] },
@@ -149,7 +149,7 @@ export default async function handler(req, res) {
                         $sum: { $cond: [{ $eq: ["$guests.attend_welcome_party", false] }, 1, 0] }
                     },
 
-                    adultsWelcomeParty: {
+                    adultsAttendingWelcomeParty: {
                         $sum: {
                             $cond: [
                                 { $and: [{ $eq: ["$guests.attend_welcome_party", true] }, { $eq: ["$guests.age_group", "Adult"] }] },
@@ -158,7 +158,7 @@ export default async function handler(req, res) {
                             ]
                         }
                     },
-                    childrenWelcomeParty: {
+                    childrenAttendingWelcomeParty: {
                         $sum: {
                             $cond: [
                                 { $and: [{ $eq: ["$guests.attend_welcome_party", true] }, { $eq: ["$guests.age_group", "Child"] }] },
@@ -167,7 +167,7 @@ export default async function handler(req, res) {
                             ]
                         }
                     },
-                    toddlersWelcomeParty: {
+                    toddlersAttendingWelcomeParty: {
                         $sum: {
                             $cond: [
                                 { $and: [{ $eq: ["$guests.attend_welcome_party", true] }, { $eq: ["$guests.age_group", "Toddler"] }] },
