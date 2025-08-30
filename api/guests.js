@@ -28,7 +28,31 @@ export default async function handler(req, res) {
         const collection = db.collection("guests"); // your collection name
 
         // Simple find query
-        const guests = await collection.find({}).toArray();
+        const guests = await collection.aggregate([
+            {
+                '$set': {
+                    'guests.rsvp_id': '$_id'
+                }
+            }, {
+                '$replaceRoot': {
+                    'newRoot': '$guests'
+                }
+            }, {
+                '$group': {
+                    '_id': '$name',
+                    'alternative_names': {
+                        '$first': '$alternative_names'
+                    },
+                    'rsvp_ids': {
+                        '$addToSet': '$rsvp_id'
+                    }
+                }
+            }, {
+                '$sort': {
+                    '_id': 1
+                }
+            }
+        ]).toArray()
 
         res.status(200).json({ guests });
     } catch (error) {
