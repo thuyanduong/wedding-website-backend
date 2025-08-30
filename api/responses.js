@@ -40,10 +40,14 @@ export default async function handler(req, res) {
       mutation.updated_at = new Date()
       mutation.email = newResponse.email
       mutation.phone = newResponse.phone
-      mutation.comments = newResponse.comments
+      if (mutation.comments.trim() === "") {
+        mutation.comments = null
+      } else {
+        mutation.comments = newResponse.comments
+      }
       mutation.guests = []
 
-      for(const guest of newResponse.guests){
+      for (const guest of newResponse.guests) {
         if (guest.attend_wedding === false) {
           guest.wedding_entree = null
         }
