@@ -25,9 +25,9 @@ function generateConfirmationEmail(data) {
 
   return `
     <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
-      <h2>Thank you for your RSVP!</h2>
-      <p>Here is the information we received:</p>
-      <p><strong>Email:</strong> ${email}</p>
+      <h2>Thank you for your RSVP, Moot!</h2>
+      <p>This is just a test. The real email will be a bit nicer.</p>
+      <p>You have RSVPed with the following information below.</p>
       <p><strong>Phone:</strong> ${phone}</p>
       ${comments ? `<p><strong>Comments:</strong> ${comments}</p>` : ""}
       <h3>Guests:</h3>
