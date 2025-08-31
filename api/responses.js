@@ -2,6 +2,7 @@
 
 import { MongoClient, ObjectId } from "mongodb";
 import 'dotenv/config';
+import bodyParser from "body-parser";
 
 let cachedClient = null;
 
@@ -53,6 +54,12 @@ export default async function handler(req, res) {
         }
         mutation.guests.push(guest)
       }
+      const ip =
+        req.headers["x-forwarded-for"]?.split(",")[0] || // Handles proxies/load balancers
+        req.socket.remoteAddress;
+
+      mutation.ip_address = ip;
+
       console.log(mutation)
       const result = await collection.updateOne(filter, { $set: mutation });
       if (result.modifiedCount === 1) {
