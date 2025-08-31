@@ -2,7 +2,6 @@
 
 import { MongoClient, ObjectId } from "mongodb";
 import 'dotenv/config';
-import bodyParser from "body-parser";
 import nodemailer from "nodemailer";
 
 let cachedClient = null;
@@ -18,7 +17,6 @@ function generateConfirmationEmail(data) {
         <p><strong>Attending Wedding:</strong> ${guest.attend_wedding ? "Yes" : "No"}</p>
         ${guest.wedding_entree ? `<p><strong>Wedding Entree:</strong> ${guest.wedding_entree}</p>` : ""}
         ${guest.dietary_notes ? `<p><strong>Dietary Notes:</strong> ${guest.dietary_notes}</p>` : ""}
-        ${guest.comments ? `<p><strong>Comments:</strong> ${guest.comments}</p>` : ""}
       </div>
     `;
   }).join("");
