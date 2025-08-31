@@ -5,6 +5,7 @@ import hello from "./api/hello.js";
 import test from "./api/test.js";
 import stats from "./api/stats.js"
 import guests from './api/guests.js'
+import changes from './api/changes.js'
 
 const app = express();
 const PORT = process.env.PORT || 5555;
@@ -16,7 +17,8 @@ app.use(express.json());
 app.all("/api/responses", responses);
 app.all("/api/stats", stats);
 app.all("/api/guests", guests);
-app.all("/api/responses/:id", responseById); // pass req directly, handler uses req.params.id
+app.all("/api/changes", changes);
+app.all("/api/responses/:id", responseById); 
 app.all("/api/hello", hello);
 app.all("/api/test", test);
 
