@@ -3,8 +3,38 @@
 import { MongoClient, ObjectId } from "mongodb";
 import 'dotenv/config';
 import bodyParser from "body-parser";
+import nodemailer from "nodemailer";
 
 let cachedClient = null;
+
+function generateConfirmationEmail(data) {
+  const { email, phone, comments, guests } = data;
+
+  let guestHtml = guests.map(guest => {
+    return `
+      <div style="margin-bottom: 12px; padding: 8px; border-bottom: 1px solid #ccc;">
+        <p><strong>Name:</strong> ${guest.name}</p>
+        <p><strong>Attending Welcome Party:</strong> ${guest.attend_welcome_party ? "Yes" : "No"}</p>
+        <p><strong>Attending Wedding:</strong> ${guest.attend_wedding ? "Yes" : "No"}</p>
+        ${guest.wedding_entree ? `<p><strong>Wedding Entree:</strong> ${guest.wedding_entree}</p>` : ""}
+        ${guest.dietary_notes ? `<p><strong>Dietary Notes:</strong> ${guest.dietary_notes}</p>` : ""}
+        ${guest.comments ? `<p><strong>Comments:</strong> ${guest.comments}</p>` : ""}
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+      <h2>Thank you for your RSVP!</h2>
+      <p>Here is the information we received:</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Phone:</strong> ${phone}</p>
+      ${comments ? `<p><strong>Comments:</strong> ${comments}</p>` : ""}
+      <h3>Guests:</h3>
+      ${guestHtml}
+    </div>
+  `;
+}
 
 export default async function handler(req, res) {
   // ✅ CORS headers
@@ -49,6 +79,7 @@ export default async function handler(req, res) {
       mutation.guests = []
 
       for (const guest of newResponse.guests) {
+        guest.dietary_notes = guest.dietary_notes.trim()
         if (guest.attend_wedding === false) {
           guest.wedding_entree = null
         }
@@ -63,6 +94,27 @@ export default async function handler(req, res) {
       console.log(mutation)
       const result = await collection.updateOne(filter, { $set: mutation });
       if (result.modifiedCount === 1) {
+
+        //Send email confirmation 
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.GMAIL_USER, // your gmail address
+            pass: process.env.GMAIL_APP_PASSWORD, // app password
+          },
+        });
+
+        const emailData = mutation
+
+        const mailOptions = {
+          from: '"Thuyan & Jerry" <annjerrygetmarried@gmail.com>',
+          to: newResponse.email,
+          subject: "Thank You for Your RSVP!",
+          html: generateConfirmationEmail(emailData)
+        };
+
+        await transporter.sendMail(mailOptions);
+
         return res.status(201).json({ message: "Response recorded", result });
 
       } else {
