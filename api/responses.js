@@ -16,17 +16,17 @@ function generateConfirmationEmail(data) {
         <p><strong>Attending Welcome Party:</strong> ${guest.attend_welcome_party ? "Yes" : "No"}</p>
         <p><strong>Attending Wedding:</strong> ${guest.attend_wedding ? "Yes" : "No"}</p>
         ${guest.wedding_entree ? `<p><strong>Wedding Entree:</strong> ${guest.wedding_entree}</p>` : ""}
-        ${guest.dietary_notes ? `<p><strong>Dietary Notes:</strong> ${guest.dietary_notes}</p>` : ""}
+        ${guest.dietary_restrictions ? `<p><strong>Dietary Restrictions:</strong> ${guest.dietary_restrictions}</p>` : ""}
       </div>
     `;
   }).join("");
 
   return `
     <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
-      <h2>Thank you for your RSVP, Moot!</h2>
-      <p>This is just a test. The real email will be a bit nicer.</p>
-      <p>You have RSVPed with the following information below.</p>
-      <p><strong>Phone:</strong> ${phone}</p>
+      <h2>Thank you for your RSVP!</h2>
+      <p>Your group has RSVPed with the following information below.</p>
+      <p>You can update your RSVP response any time before March 15th, 2026 through our wedding website.</p>
+      <p><strong>Phone Number:</strong> ${phone}</p>
       ${comments ? `<p><strong>Comments:</strong> ${comments}</p>` : ""}
       <h3>Guests:</h3>
       ${guestHtml}
@@ -77,7 +77,7 @@ export default async function handler(req, res) {
       mutation.guests = []
 
       for (const guest of newResponse.guests) {
-        guest.dietary_notes = guest.dietary_notes.trim()
+        guest.dietary_restrictions = guest.dietary_restrictions.trim()
         if (guest.attend_wedding === false) {
           guest.wedding_entree = null
         }

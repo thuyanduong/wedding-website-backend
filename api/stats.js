@@ -93,10 +93,10 @@ export default async function handler(req, res) {
                             ]
                         }
                     },
-                    adultVegetarianEntrees: {
+                    adultVeganEntrees: {
                         $sum: {
                             $cond: [
-                                { $and: [{ $eq: ["$guests.wedding_entree", "Vegetarian"] }, { $eq: ["$guests.age_group", "Adult"] }] },
+                                { $and: [{ $eq: ["$guests.wedding_entree", "Vegan"] }, { $eq: ["$guests.age_group", "Adult"] }] },
                                 1,
                                 0
                             ]
@@ -122,10 +122,10 @@ export default async function handler(req, res) {
                             ]
                         }
                     },
-                    childVegetarianEntrees: {
+                    childVeganEntrees: {
                         $sum: {
                             $cond: [
-                                { $and: [{ $eq: ["$guests.wedding_entree", "Vegetarian"] }, { $eq: ["$guests.age_group", "Child"] }] },
+                                { $and: [{ $eq: ["$guests.wedding_entree", "Vegan"] }, { $eq: ["$guests.age_group", "Child"] }] },
                                 1,
                                 0
                             ]
@@ -183,7 +183,7 @@ export default async function handler(req, res) {
                             $cond: [
                                 {
                                     $not: {
-                                        $in: ["$guests.wedding_entree", ["Beef", "Fish", "Vegetarian", "Child", null]]
+                                        $in: ["$guests.wedding_entree", ["Beef", "Fish", "Vegan", "Child", null]]
                                     }
                                 },
                                 1,
