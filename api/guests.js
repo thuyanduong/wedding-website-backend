@@ -27,7 +27,44 @@ export default async function handler(req, res) {
         const db = cachedClient.db("rsvp");
         const collection = db.collection("guests"); // your collection name
 
-        const guests = await collection.find().toArray()
+        const guests = await collection.aggregate([
+            {
+                '$set': {
+                    'guests.rsvp_id': '$_id'
+                }
+            }, 
+            {
+                '$replaceRoot': {
+                    'newRoot': '$guests'
+                }
+            }, 
+            {
+                '$match': {
+                    'is_plus_one': { '$ne': true }
+                }
+            }, 
+            {
+                '$group': {
+                    '_id': '$name',
+                    'alternative_names': {
+                        '$first': '$alternative_names'
+                    },
+                    'rsvp_ids': {
+                        '$addToSet': '$rsvp_id'
+                    }
+                }
+            }, 
+            {
+                '$set': {
+                    'name': '$_id'
+                }
+            }, 
+            {
+                '$sort': {
+                    '_id': 1
+                }
+            }
+        ]).toArray()
 
         res.status(200).json({ guests });
     } catch (error) {
