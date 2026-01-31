@@ -24,7 +24,7 @@ function generateConfirmationEmail(data) {
   return `
     <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
       <h2>Thank you for your RSVP!</h2>
-      <p>Your group has RSVPed with the following information below.</p>
+      <p>Your group has RSVPed to Thuyan and Jerry's wedding with the following information below.</p>
       <p>You can update your RSVP response any time before March 15th, 2026 through our wedding website.</p>
       <p><strong>Phone Number:</strong> ${phone}</p>
       ${comments ? `<p><strong>Comments:</strong> ${comments}</p>` : ""}
