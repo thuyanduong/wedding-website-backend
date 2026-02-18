@@ -183,7 +183,7 @@ export default async function handler(req, res) {
                             $cond: [
                                 {
                                     $not: {
-                                        $in: ["$guests.wedding_entree", ["Beef", "Fish", "Vegetarian", "Child", null]]
+                                        $in: ["$guests.wedding_entree", ["Beef", "Fish", "Vegetarian", "Children's Meal", null]]
                                     }
                                 },
                                 1,
