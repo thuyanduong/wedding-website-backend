@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
         if (req.method === "GET") {
             // Fetch all unreviewed changes
-            const changes = await collection.find({ reviewed: false }).toArray();
+            const changes = await collection.find({ }).toArray();
             return res.status(200).json({ changes });
         }
 
