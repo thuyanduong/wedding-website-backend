@@ -32,6 +32,9 @@ export default async function handler(req, res) {
                 $replaceRoot: { newRoot: "$guests" }
             },
             {
+                $match: { attend_wedding: true }
+            },
+            {
                 $sort: { name: 1 } 
             }
         ]).toArray()
