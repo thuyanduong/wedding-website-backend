@@ -30,6 +30,9 @@ export default async function handler(req, res) {
         const guests = await collection.aggregate([
             {
                 $replaceRoot: { newRoot: "$guests" }
+            },
+            {
+                $sort: { name: 1 } 
             }
         ]).toArray()
 
