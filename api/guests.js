@@ -28,7 +28,7 @@ export default async function handler(req, res) {
         const collection = db.collection("guests"); // your collection name
 
         // 👇 read query param
-        const { attending_wedding, attending_welcome_party } = req.query;
+        const { attend_wedding, attend_welcome_party } = req.query;
 
         const pipeline = [
             {
@@ -36,11 +36,11 @@ export default async function handler(req, res) {
             }
         ];
 
-        if (attending_wedding === "true") {
-            pipeline.push({
-                $match: { attending_wedding: true }
-            });
-        }
+        // if (attending_wedding === "true") {
+        //     pipeline.push({
+        //         $match: { "guests.attending_wedding": true }
+        //     });
+        // }
 
         pipeline.push({
             $sort: { name: 1 }
