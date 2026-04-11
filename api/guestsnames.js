@@ -1,74 +1,74 @@
-//do not use
+// //do not use
 
-import { MongoClient } from "mongodb";
-import 'dotenv/config';
+// import { MongoClient } from "mongodb";
+// import 'dotenv/config';
 
-let cachedClient = null;
+// let cachedClient = null;
 
-export default async function handler(req, res) {
-    // ✅ CORS headers
-    res.setHeader("Access-Control-Allow-Origin", "*"); // change "*" to your frontend domain in prod
-    res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+// export default async function handler(req, res) {
+//     // ✅ CORS headers
+//     res.setHeader("Access-Control-Allow-Origin", "*"); // change "*" to your frontend domain in prod
+//     res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+//     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-    // ✅ Handle preflight (OPTIONS) request
-    if (req.method === "OPTIONS") {
-        return res.status(200).end();
-    }
+//     // ✅ Handle preflight (OPTIONS) request
+//     if (req.method === "OPTIONS") {
+//         return res.status(200).end();
+//     }
 
-    try {
-        // Reuse client if already connected
-        if (!cachedClient) {
-            const client = new MongoClient(process.env.MONGODB_URI);
-            await client.connect();
-            cachedClient = client;
-        }
+//     try {
+//         // Reuse client if already connected
+//         if (!cachedClient) {
+//             const client = new MongoClient(process.env.MONGODB_URI);
+//             await client.connect();
+//             cachedClient = client;
+//         }
 
-        const db = cachedClient.db("rsvp");
-        const collection = db.collection("guests"); // your collection name
+//         const db = cachedClient.db("rsvp");
+//         const collection = db.collection("guests"); // your collection name
 
-        const guests = await collection.aggregate([
-            {
-                '$set': {
-                    'guests.rsvp_id': '$_id'
-                }
-            }, 
-            {
-                '$replaceRoot': {
-                    'newRoot': '$guests'
-                }
-            }, 
-            {
-                '$match': {
-                    'is_plus_one': { '$ne': true }
-                }
-            }, 
-            {
-                '$group': {
-                    '_id': '$name',
-                    'alternative_names': {
-                        '$first': '$alternative_names'
-                    },
-                    'rsvp_ids': {
-                        '$addToSet': '$rsvp_id'
-                    }
-                }
-            }, 
-            {
-                '$set': {
-                    'name': '$_id'
-                }
-            }, 
-            {
-                '$sort': {
-                    '_id': 1
-                }
-            }
-        ]).toArray()
+//         const guests = await collection.aggregate([
+//             {
+//                 '$set': {
+//                     'guests.rsvp_id': '$_id'
+//                 }
+//             }, 
+//             {
+//                 '$replaceRoot': {
+//                     'newRoot': '$guests'
+//                 }
+//             }, 
+//             {
+//                 '$match': {
+//                     'is_plus_one': { '$ne': true }
+//                 }
+//             }, 
+//             {
+//                 '$group': {
+//                     '_id': '$name',
+//                     'alternative_names': {
+//                         '$first': '$alternative_names'
+//                     },
+//                     'rsvp_ids': {
+//                         '$addToSet': '$rsvp_id'
+//                     }
+//                 }
+//             }, 
+//             {
+//                 '$set': {
+//                     'name': '$_id'
+//                 }
+//             }, 
+//             {
+//                 '$sort': {
+//                     '_id': 1
+//                 }
+//             }
+//         ]).toArray()
 
-        res.status(200).json({ guests });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Failed to fetch data" });
-    }
-}
+//         res.status(200).json({ guests });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: "Failed to fetch data" });
+//     }
+// }

@@ -27,14 +27,26 @@ export default async function handler(req, res) {
         const db = cachedClient.db("rsvp");
         const collection = db.collection("guests"); // your collection name
 
-        const guests = await collection.aggregate([
+        // 👇 read query param
+        const { attending_wedding, attending_welcome_party } = req.query;
+
+        const pipeline = [
             {
                 $replaceRoot: { newRoot: "$guests" }
-            },
-            {
-                $sort: { name: 1 } 
             }
-        ]).toArray()
+        ];
+
+        if (attending_wedding === "true") {
+            pipeline.push({
+                $match: { attending_wedding: true }
+            });
+        }
+
+        pipeline.push({
+            $sort: { name: 1 }
+        });
+
+        const guests = await collection.aggregate(pipeline).toArray();
 
         res.status(200).json({ guests });
     } catch (error) {
