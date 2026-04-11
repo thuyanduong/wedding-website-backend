@@ -57,7 +57,32 @@ export default async function handler(req, res) {
     const collection = db.collection("responses");
 
     if (req.method === "GET") {
-      const responses = await collection.find({}).toArray();
+      const { attend_wedding, attend_welcome_party } = req.query;
+
+      const elemMatch = {};
+
+      // Build conditions for the guests array
+      if (attend_wedding === "true") {
+        elemMatch.attend_wedding = true;
+      } else if (attend_wedding === "false") {
+        elemMatch.attend_wedding = false;
+      }
+
+      if (attend_welcome_party === "true") {
+        elemMatch.attend_welcome_party = true;
+      } else if (attend_welcome_party === "false") {
+        elemMatch.attend_welcome_party = false;
+      }
+
+      let filter = {};
+
+      // Only apply $elemMatch if at least one condition exists
+      if (Object.keys(elemMatch).length > 0) {
+        filter.guests = { $elemMatch: elemMatch };
+      }
+
+      const responses = await collection.find(filter).toArray();
+
       return res.status(200).json({ responses });
     }
 
