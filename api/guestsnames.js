@@ -1,4 +1,4 @@
-// /api/responses/
+//do not use
 
 import { MongoClient } from "mongodb";
 import 'dotenv/config';

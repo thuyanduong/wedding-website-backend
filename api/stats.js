@@ -1,3 +1,5 @@
+// /api/stats/
+ 
 import { MongoClient } from "mongodb";
 import 'dotenv/config';
 

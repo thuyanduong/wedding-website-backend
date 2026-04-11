@@ -6,7 +6,6 @@ import test from "./api/test.js";
 import stats from "./api/stats.js"
 import guests from './api/guests.js'
 import changes from './api/changes.js'
-import guestlist from './api/guestlist.js'
 
 const app = express();
 const PORT = process.env.PORT || 5555;
@@ -18,7 +17,6 @@ app.use(express.json());
 app.all("/api/responses", responses);
 app.all("/api/stats", stats);
 app.all("/api/guests", guests);
-app.all("/api/guestlist", guestlist);
 app.all("/api/changes", changes);
 app.all("/api/responses/:id", responseById); 
 app.all("/api/hello", hello);
