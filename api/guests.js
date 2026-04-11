@@ -38,7 +38,7 @@ export default async function handler(req, res) {
 
         if (attend_wedding === "true") {
             pipeline.push({
-                $match: { "guests.attending_wedding": true }
+                $match: { "attend_wedding": true }
             });
         }
 
