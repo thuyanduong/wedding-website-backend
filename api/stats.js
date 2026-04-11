@@ -1,5 +1,3 @@
-// /api/guests/
-
 import { MongoClient } from "mongodb";
 import 'dotenv/config';
 

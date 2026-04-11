@@ -29,13 +29,40 @@ export default async function handler(req, res) {
 
         const guests = await collection.aggregate([
             {
-                $replaceRoot: { newRoot: "$guests" }
-            },
+                '$set': {
+                    'guests.rsvp_id': '$_id'
+                }
+            }, 
             {
-                $match: { attend_wedding: true }
-            },
+                '$replaceRoot': {
+                    'newRoot': '$guests'
+                }
+            }, 
             {
-                $sort: { name: 1 } 
+                '$match': {
+                    'is_plus_one': { '$ne': true }
+                }
+            }, 
+            {
+                '$group': {
+                    '_id': '$name',
+                    'alternative_names': {
+                        '$first': '$alternative_names'
+                    },
+                    'rsvp_ids': {
+                        '$addToSet': '$rsvp_id'
+                    }
+                }
+            }, 
+            {
+                '$set': {
+                    'name': '$_id'
+                }
+            }, 
+            {
+                '$sort': {
+                    '_id': 1
+                }
             }
         ]).toArray()
 
