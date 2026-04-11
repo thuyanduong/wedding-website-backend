@@ -1,56 +1,77 @@
-// /api/guests/
-
 import { MongoClient } from "mongodb";
 import 'dotenv/config';
 
 let cachedClient = null;
 
 export default async function handler(req, res) {
-    // ✅ CORS headers
-    res.setHeader("Access-Control-Allow-Origin", "*"); // change "*" to your frontend domain in prod
-    res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-    // ✅ Handle preflight (OPTIONS) request
-    if (req.method === "OPTIONS") {
-        return res.status(200).end();
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  try {
+    if (!cachedClient) {
+      const client = new MongoClient(process.env.MONGODB_URI);
+      await client.connect();
+      cachedClient = client;
     }
 
-    try {
-        // Reuse client if already connected
-        if (!cachedClient) {
-            const client = new MongoClient(process.env.MONGODB_URI);
-            await client.connect();
-            cachedClient = client;
-        }
+    const db = cachedClient.db("rsvp");
+    const collection = db.collection("guests");
 
-        const db = cachedClient.db("rsvp");
-        const collection = db.collection("guests"); // your collection name
+    if (req.method === "GET") {
+      const { attend_wedding, attend_welcome_party } = req.query;
 
-        // 👇 read query param
-        const { attend_wedding, attend_welcome_party } = req.query;
+      const match = {};
 
-        const pipeline = [
-            {
-                $replaceRoot: { newRoot: "$guests" }
-            }
-        ];
+      // AFTER replaceRoot, fields are top-level
+      if (attend_wedding === "true") {
+        match.attend_wedding = true;
+      } else if (attend_wedding === "false") {
+        match.attend_wedding = false;
+      }
 
-        if (attend_wedding === "true") {
-            pipeline.push({
-                $match: { "attend_wedding": true }
-            });
-        }
+      if (attend_welcome_party === "true") {
+        match.attend_welcome_party = true;
+      } else if (attend_welcome_party === "false") {
+        match.attend_welcome_party = false;
+      }
 
-        pipeline.push({
-            $sort: { name: 1 }
-        });
+      const pipeline = [
+        // ✅ FIRST: flatten guest object
+        {
+          $replaceRoot: {
+            newRoot: "$guests",
+          },
+        },
 
-        const guests = await collection.aggregate(pipeline).toArray();
+        // ✅ THEN: apply filters if needed
+        ...(Object.keys(match).length > 0
+          ? [
+              {
+                $match: match,
+              },
+            ]
+          : []),
 
-        res.status(200).json({ guests });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Failed to fetch data" });
+        // optional sort
+        {
+          $sort: { name: 1 },
+        },
+      ];
+
+      const guests = await collection.aggregate(pipeline).toArray();
+
+      return res.status(200).json({ guests });
     }
+
+    res.setHeader("Allow", "GET,OPTIONS");
+    res.status(405).end(`Method ${req.method} Not Allowed`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch data" });
+  }
 }
