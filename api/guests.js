@@ -36,11 +36,11 @@ export default async function handler(req, res) {
             }
         ];
 
-        // if (attending_wedding === "true") {
-        //     pipeline.push({
-        //         $match: { "guests.attending_wedding": true }
-        //     });
-        // }
+        if (attend_wedding === "true") {
+            pipeline.push({
+                $match: { "guests.attending_wedding": true }
+            });
+        }
 
         pipeline.push({
             $sort: { name: 1 }
